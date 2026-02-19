@@ -1,22 +1,21 @@
 import React, { useState } from 'react'
 import { useApp, ACTIONS } from '../context/AppContext'
-import { persistConfig } from '../config/appConfig'
 
 export default function Settings() {
   const { state, dispatch } = useApp()
-  const [appIdInput,    setAppIdInput]    = useState(state.appId         || '')
-  const [escrowInput,   setEscrowInput]   = useState(state.escrowAddress || '')
-  const [saved,         setSaved]         = useState(false)
-  const [network,       setNetwork]       = useState(state.network)
+  const [network, setNetwork] = useState(state.network)
+  const [copiedApp, setCopiedApp] = useState(false)
+  const [copiedEscrow, setCopiedEscrow] = useState(false)
 
-  function saveSettings(e) {
-    e.preventDefault()
-    dispatch({ type: ACTIONS.SET_APP_ID,        payload: appIdInput })
-    dispatch({ type: ACTIONS.SET_NETWORK,       payload: network })
-    dispatch({ type: ACTIONS.SET_ESCROW_ADDRESS, payload: escrowInput })
-    persistConfig({ APP_ID: Number(appIdInput) || 0, ESCROW_ADDRESS: escrowInput })
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2500)
+  const appId   = state.appId
+  const escrow  = state.escrowAddress
+
+  const copyValue = (text, setter) => {
+    if (!text) return
+    navigator.clipboard?.writeText(String(text)).then(() => {
+      setter(true)
+      setTimeout(() => setter(false), 1500)
+    })
   }
 
   return (
@@ -29,6 +28,38 @@ export default function Settings() {
         <p className="text-slate-400 text-sm mt-1">
           Configure network, app ID, and preferences
         </p>
+      </div>
+
+      {/* Static contract identifiers */}
+      <div className="card space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs text-slate-500 uppercase tracking-widest">App ID</p>
+            <p className="text-white font-semibold mt-1">{appId || 'Not set'}</p>
+          </div>
+          <button
+            type="button"
+            className="btn-secondary text-xs"
+            onClick={() => copyValue(appId, setCopiedApp)}
+            disabled={!appId}
+          >
+            {copiedApp ? 'Copied' : 'Copy'}
+          </button>
+        </div>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1">
+            <p className="text-xs text-slate-500 uppercase tracking-widest">Escrow Address</p>
+            <p className="text-white font-mono text-xs break-all mt-1">{escrow || 'Not set'}</p>
+          </div>
+          <button
+            type="button"
+            className="btn-secondary text-xs whitespace-nowrap"
+            onClick={() => copyValue(escrow, setCopiedEscrow)}
+            disabled={!escrow}
+          >
+            {copiedEscrow ? 'Copied' : 'Copy'}
+          </button>
+        </div>
       </div>
 
       {/* Wallet section */}
@@ -70,7 +101,7 @@ export default function Settings() {
       </div>
 
       {/* Network & App ID */}
-      <form onSubmit={saveSettings} className="card space-y-5">
+      <div className="card space-y-5">
         <h2 className="font-semibold text-white flex items-center gap-2">
           <span>🔗</span> Network Configuration
         </h2>
@@ -82,7 +113,7 @@ export default function Settings() {
               <button
                 key={n}
                 type="button"
-                onClick={() => setNetwork(n)}
+                onClick={() => { setNetwork(n); dispatch({ type: ACTIONS.SET_NETWORK, payload: n }) }}
                 className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition
                   ${network === n
                     ? 'border-cyan-500/60 bg-cyan-500/15 text-cyan-300'
@@ -104,40 +135,20 @@ export default function Settings() {
 
         <div>
           <label className="block text-sm text-slate-400 mb-1.5">App ID</label>
-          <input
-            className="input"
-            placeholder="e.g. 123456789"
-            value={appIdInput}
-            onChange={e => setAppIdInput(e.target.value)}
-          />
-          <p className="text-xs text-slate-600 mt-1">
-            The Algorand application ID from your smart contract deployment.
-          </p>
+          <div className="input bg-surface-700/50 border-white/10 text-white">
+            {appId || 'Not set'}
+          </div>
+          <p className="text-xs text-slate-600 mt-1">This build uses the statically configured App ID.</p>
         </div>
 
         <div>
           <label className="block text-sm text-slate-400 mb-1.5">Escrow Address</label>
-          <input
-            className="input font-mono text-xs"
-            placeholder="58 character Algorand address…"
-            value={escrowInput}
-            onChange={e => setEscrowInput(e.target.value)}
-          />
-          <p className="text-xs text-slate-600 mt-1">
-            The escrow pool account address. Used for deposits and balance tracking.
-          </p>
+          <div className="input font-mono text-xs bg-surface-700/50 border-white/10 text-white break-all">
+            {escrow || 'Not set'}
+          </div>
+          <p className="text-xs text-slate-600 mt-1">Statically configured escrow address.</p>
         </div>
-
-        <button type="submit" className="btn-primary w-full justify-center py-3">
-          {saved ? '✓ Saved to localStorage!' : 'Save Configuration'}
-        </button>
-
-        {saved && (
-          <p className="text-xs text-green-400 text-center">
-            Settings persisted — will be restored on next page load.
-          </p>
-        )}
-      </form>
+      </div>
 
       {/* Theme section */}
       <div className="card space-y-4">

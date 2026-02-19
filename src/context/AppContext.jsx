@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react'
 import peraWallet from '../services/peraWallet'
+import appConfig from '../config/appConfig'
 import {
   getBalance,
   getEscrowBalance,
@@ -21,9 +22,9 @@ const initialState = {
   balance:         null,       // live ALGO balance
 
   // Network / contract config
-  network:         'testnet',
-  appId:           localStorage.getItem('algopay_appId') ?? '',
-  escrowAddress:   localStorage.getItem('algopay_escrow') ?? '',
+  network:         appConfig.NETWORK ?? 'testnet',
+  appId:           appConfig.APP_ID ?? '',
+  escrowAddress:   appConfig.ESCROW_ADDRESS ?? '',
   escrowBalance:   null,
 
   // On-chain data (centralised – all pages read from here)
@@ -111,10 +112,8 @@ function appReducer(state, action) {
     case ACTIONS.SET_NETWORK:
       return { ...state, network: action.payload }
     case ACTIONS.SET_APP_ID:
-      localStorage.setItem('algopay_appId', action.payload)
       return { ...state, appId: action.payload }
     case ACTIONS.SET_ESCROW_ADDRESS:
-      localStorage.setItem('algopay_escrow', action.payload)
       return { ...state, escrowAddress: action.payload }
     case ACTIONS.SET_BALANCE:
       return { ...state, balance: action.payload }
