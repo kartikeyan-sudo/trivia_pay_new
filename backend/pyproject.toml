@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "trivia-pay-contracts"
+version = "0.1.0"
+description = "TrivaPay smart contracts on Algorand"
+authors = []
+
+[tool.poetry.dependencies]
+python = "^3.12"
+algorand-python = "^2.0.0"
+algokit-utils = "^3.0.0"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

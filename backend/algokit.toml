@@ -1,0 +1,18 @@
+[algokit]
+min_version = "v2.0.0"
+
+[project]
+type = "contract"
+name = "trivia-pay"
+
+[project.deploy]
+command = "python deploy/deploy.py"
+environment_secrets = []
+
+[project.deploy.environment_config.testnet]
+algod_server = "https://testnet-api.algonode.cloud"
+algod_port = ""
+algod_token = ""
+indexer_server = "https://testnet-idx.algonode.cloud"
+indexer_port = ""
+indexer_token = ""
