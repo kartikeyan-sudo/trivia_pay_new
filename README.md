@@ -6,6 +6,9 @@ Pera Wallet–based Algorand testnet demo for bill splitting, payments, and anal
 - App ID: **755792571**
 - Escrow: **ER745AB7H64MC7RO5PEL7YCDQ245JOHVPHN5WHO3FCGPI5Y7GHL5QGAT64**
 
+ ## Smart Contract Integration 
+ File Path - backend/smart_contracts/trivia_pay/contract.py
+
 These are wired statically in `frontend/src/config/appConfig.js` and surfaced read-only in the Settings page.
 
 ## Quick Start (frontend)
@@ -33,4 +36,5 @@ These are wired statically in `frontend/src/config/appConfig.js` and surfaced re
 - Wallet integration: Pera Wallet only (Defly removed).
 - Network: Testnet (Algonode public endpoints).
 - Settings page shows the static App ID and escrow; they are not user-editable.
+
 
